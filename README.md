@@ -1,6 +1,14 @@
 # Portal de Vagas - MVP
 
+[![Build Status](https://github.com/felipemacedo1/portal-vagas/workflows/CI/badge.svg)](https://github.com/felipemacedo1/portal-vagas/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/felipemacedo1/portal-vagas/releases)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.java.net/projects/jdk/17/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.x-green.svg)](https://spring.io/projects/spring-boot)
+
 API REST para portal de vagas com autenticação JWT e controle de acesso baseado em roles.
+
+> 🎯 **Projeto Social**: Sistema gratuito para ONGs conectarem candidatos a oportunidades de emprego.
 
 ## Tecnologias
 
