@@ -35,8 +35,8 @@
 - [ ] Analytics avançados
 
 ## 🎯 Objetivos de Impacto Social
-- **Meta 2024**: 100 vagas publicadas, 500 candidatos cadastrados
-- **Meta 2025**: 1000 vagas, 5000 candidatos, 10 ONGs parceiras
+- **Meta 2025**: 100 vagas publicadas, 500 candidatos cadastrados
+- **Meta 2026**: 1000 vagas, 5000 candidatos, 10 ONGs parceiras
 
 ## 🤝 Como Contribuir
 1. Escolha uma issue do roadmap

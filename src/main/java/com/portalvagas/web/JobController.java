@@ -50,6 +50,17 @@ public class JobController {
         return jobService.getJobApplications(user, pageable);
     }
 
+    @PutMapping("/applications/{id}/status")
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public ResponseEntity<Application> updateApplicationStatus(
+            @PathVariable Long id,
+            @RequestParam Application.Status status,
+            @AuthenticationPrincipal User user) {
+        
+        Application application = jobService.updateApplicationStatus(id, status, user);
+        return ResponseEntity.ok(application);
+    }
+
     @Data
     public static class CreateJobRequest {
         @NotBlank

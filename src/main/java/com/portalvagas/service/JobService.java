@@ -15,6 +15,7 @@ public class JobService {
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository;
     private final ApplicationRepository applicationRepository;
+    private final NotificationService notificationService;
 
     public Job createJob(User user, String title, String description, String requirements,
                         BigDecimal salaryMin, BigDecimal salaryMax, String location, Boolean remote) {
@@ -56,5 +57,24 @@ public class JobService {
                 .orElseThrow(() -> new RuntimeException("Company not found"));
         
         return applicationRepository.findByCompanyId(company.getId(), pageable);
+    }
+
+    public Application updateApplicationStatus(Long applicationId, Application.Status newStatus, User user) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        Company company = companyRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        if (!application.getJob().getCompany().getId().equals(company.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        application.setStatus(newStatus);
+        Application savedApplication = applicationRepository.save(application);
+        
+        notificationService.notifyApplicationStatusChange(savedApplication);
+        
+        return savedApplication;
     }
 }

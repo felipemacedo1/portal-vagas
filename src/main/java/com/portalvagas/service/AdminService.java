@@ -12,6 +12,7 @@ public class AdminService {
 
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository;
+    private final NotificationService notificationService;
 
     public Page<Job> getPendingJobs(Pageable pageable) {
         return jobRepository.findByStatus(Job.Status.PENDING, pageable);
@@ -30,7 +31,15 @@ public class AdminService {
         }
 
         job.setStatus(newStatus);
-        return jobRepository.save(job);
+        Job savedJob = jobRepository.save(job);
+        
+        if (newStatus == Job.Status.APPROVED) {
+            notificationService.notifyJobApproved(savedJob);
+        } else if (newStatus == Job.Status.REJECTED) {
+            notificationService.notifyJobRejected(savedJob);
+        }
+        
+        return savedJob;
     }
 
     public Company verifyCompany(Long companyId, boolean verified) {

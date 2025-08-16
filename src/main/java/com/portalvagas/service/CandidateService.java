@@ -16,6 +16,7 @@ public class CandidateService {
     private final CandidateRepository candidateRepository;
     private final JobRepository jobRepository;
     private final ApplicationRepository applicationRepository;
+    private final NotificationService notificationService;
 
     public Candidate updateProfile(User user, String fullName, String phone, MultipartFile cvFile) throws IOException {
         Candidate candidate = candidateRepository.findByUserId(user.getId())
@@ -57,7 +58,10 @@ public class CandidateService {
         application.setJob(job);
         application.setStatus(Application.Status.PENDING);
 
-        return applicationRepository.save(application);
+        Application savedApplication = applicationRepository.save(application);
+        notificationService.notifyNewApplication(savedApplication);
+        
+        return savedApplication;
     }
 
     public Page<Application> getMyApplications(User user, Pageable pageable) {

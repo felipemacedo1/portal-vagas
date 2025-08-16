@@ -31,12 +31,29 @@ API REST para portal de vagas com autenticação JWT e controle de acesso basead
 docker-compose up -d
 ```
 
-2. Executar aplicação:
+2. Configurar variáveis de ambiente para email (opcional):
+```bash
+export MAIL_USERNAME=seu-email@gmail.com
+export MAIL_PASSWORD=sua-senha-de-app
+export MAIL_FROM=noreply@portalvagas.com
+```
+
+3. Executar aplicação:
 ```bash
 ./mvnw spring-boot:run
 ```
 
-3. Acessar Swagger UI: http://localhost:8080/swagger-ui/index.html
+4. Acessar Swagger UI: http://localhost:8080/swagger-ui/index.html
+
+### Configuração de Email
+
+Para habilitar notificações por email:
+1. Crie uma senha de app no Gmail
+2. Configure as variáveis de ambiente acima
+3. As notificações serão enviadas automaticamente para:
+   - Nova candidatura (para empregador)
+   - Vaga aprovada/rejeitada (para empregador)
+   - Status de candidatura alterado (para candidato)
 
 ## Endpoints Principais
 
@@ -53,6 +70,7 @@ docker-compose up -d
 - `POST /jobs` - Criar vaga (DRAFT)
 - `POST /jobs/{id}/submit` - Submeter vaga (PENDING)
 - `GET /jobs/applications` - Ver candidaturas
+- `PUT /jobs/applications/{id}/status` - Atualizar status de candidatura
 
 ### CANDIDATE
 - `PUT /candidates/me` - Atualizar perfil + CV

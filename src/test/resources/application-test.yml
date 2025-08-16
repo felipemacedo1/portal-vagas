@@ -16,6 +16,13 @@ jwt:
   access-token-expiration: 3600000
   refresh-token-expiration: 86400000
 
+mail:
+  host: localhost
+  port: 25
+  username: test
+  password: test
+  from: test@portalvagas.com
+
 logging:
   level:
     com.portalvagas: DEBUG
