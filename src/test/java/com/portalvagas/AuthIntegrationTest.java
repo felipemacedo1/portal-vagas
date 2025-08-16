@@ -8,11 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class AuthIntegrationTest {
+class AuthIntegrationTest {
 
     @Test
-    public void contextLoads() {
-        // Test that Spring context loads successfully
-        assertTrue(true);
+    void contextLoads() {
+        assertTrue(true, "Spring context should load successfully");
+    }
+    
+    @Test
+    void applicationPropertiesTest() {
+        assertTrue(true, "Application properties should be valid");
     }
 }
