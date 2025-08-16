@@ -27,7 +27,7 @@ public class AuditLog {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
     private String details;
 
     @Column(name = "created_at")
