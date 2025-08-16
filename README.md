@@ -26,24 +26,43 @@ API REST para portal de vagas com autenticação JWT e controle de acesso basead
 
 ## Setup
 
-1. Subir banco de dados:
+### 🚀 Execução Rápida
+```bash
+# Opção 1: Script automático
+./run-app.sh
+
+# Opção 2: Manual
+docker-compose up -d
+mvn spring-boot:run
+```
+
+### 📋 Passo a Passo
+
+1. **Subir banco de dados:**
 ```bash
 docker-compose up -d
 ```
 
-2. Configurar variáveis de ambiente para email (opcional):
+2. **Configurar email (opcional):**
 ```bash
 export MAIL_USERNAME=seu-email@gmail.com
 export MAIL_PASSWORD=sua-senha-de-app
 export MAIL_FROM=noreply@portalvagas.com
 ```
 
-3. Executar aplicação:
+3. **Executar aplicação:**
 ```bash
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
-4. Acessar Swagger UI: http://localhost:8080/swagger-ui/index.html
+4. **Acessar aplicação:**
+   - API: http://localhost:8081
+   - Swagger: http://localhost:8081/swagger-ui/index.html
+
+### ⚠️ Importante
+- **Para rodar aplicação**: Use `mvn spring-boot:run`
+- **Para rodar testes**: Use `mvn test` (usa H2 em memória)
+- **PostgreSQL**: Deve estar rodando (docker-compose)
 
 ### Configuração de Email
 
