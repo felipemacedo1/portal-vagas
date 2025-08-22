@@ -2,6 +2,7 @@ package com.portalvagas.web;
 
 import com.portalvagas.domain.Company;
 import com.portalvagas.domain.User;
+import com.portalvagas.dto.CompanyDTO;
 import com.portalvagas.service.CompanyService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -21,7 +22,7 @@ public class CompanyController {
 
     @PostMapping
     @PreAuthorize("hasRole('EMPLOYER')")
-    public ResponseEntity<Company> createCompany(
+    public ResponseEntity<CompanyDTO> createCompany(
             @Valid @RequestBody CreateCompanyRequest request,
             @AuthenticationPrincipal User user) {
         
@@ -32,14 +33,16 @@ public class CompanyController {
 
         Company company = companyService.createCompany(
                 user, request.getName(), request.getDescription(), request.getWebsite());
-        return ResponseEntity.ok(company);
+        return ResponseEntity.ok(CompanyDTO.from(company));
     }
 
     @GetMapping("/me")
     @PreAuthorize("hasRole('EMPLOYER')")
-    public ResponseEntity<Company> getMyCompany(@AuthenticationPrincipal User user) {
+    public ResponseEntity<CompanyDTO> getMyCompany(@AuthenticationPrincipal User user) {
         Company company = companyService.getCompanyByUser(user);
-        return company != null ? ResponseEntity.ok(company) : ResponseEntity.notFound().build();
+        return company != null ? 
+            ResponseEntity.ok(CompanyDTO.from(company)) : 
+            ResponseEntity.notFound().build();
     }
 
     @Data
