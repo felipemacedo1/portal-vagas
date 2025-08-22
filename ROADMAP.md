@@ -1,38 +1,39 @@
 # 🗺️ Roadmap - Portal de Vagas
 
-## ✅ MVP Concluído (v1.0.0)
-- [x] Autenticação JWT com roles
-- [x] CRUD de empresas, vagas e candidaturas
-- [x] Sistema de moderação de vagas
-- [x] Upload de CV
-- [x] API REST documentada
-- [x] Testes automatizados
+## ✅ MVP Concluído (v0.0.1-SNAPSHOT)
+- [x] Autenticação JWT com roles (ADMIN, EMPLOYER, CANDIDATE)
+- [x] CRUD completo de empresas, vagas e candidaturas
+- [x] Sistema de moderação de vagas (approve/reject)
+- [x] Sistema de verificação de empresas
+- [x] Upload de CV (multipart)
+- [x] API REST completa e documentada (Swagger)
+- [x] Spring Security com CORS configurado
+- [x] Hibernate com criação automática de schema
+- [x] DataLoader com dados iniciais (admin user)
+- [x] Testes básicos de integração
 
 ## 🚀 Próximas Releases
 
-### v1.1.0 - Melhorias de UX (2 semanas)
+### v0.1.0 - Frontend Mobile/Web (4 semanas)
+- [ ] Interface React Native + Web para candidatos
+- [ ] Interface para employers (RH)
+- [ ] Interface para admin (moderação)
+- [ ] Implementar todos os hooks React Query
+- [ ] Upload de CV via interface
+- [ ] Dashboard com métricas básicas
+
+### v0.2.0 - Melhorias de UX (2 semanas)
 - [ ] Sistema de matching por skills
-- [ ] Notificações por email
+- [ ] Notificações por email (já implementado no backend)
 - [ ] Status detalhado de candidaturas
-- [ ] Dashboard de métricas básicas
+- [ ] Filtros avançados de vagas
 
-### v1.2.0 - Gamificação (3 semanas)
-- [ ] Sistema de pontuação para candidatos
-- [ ] Badges de conquistas
-- [ ] Ranking de empresas mais ativas
-- [ ] Perfil de completude
-
-### v1.3.0 - Funcionalidades Sociais (4 semanas)
-- [ ] Vagas inclusivas (PCD, 50+, LGBTQI+)
-- [ ] Parcerias com empresas sociais
-- [ ] Relatórios de impacto social
-- [ ] Sistema de favoritos
-
-### v2.0.0 - Expansão (6 semanas)
-- [ ] Multi-tenancy para diferentes ONGs
-- [ ] Sistema de mensagens
-- [ ] Calendário de entrevistas
-- [ ] Analytics avançados
+### v1.0.0 - Produção (3 semanas)
+- [ ] Testes E2E completos
+- [ ] Performance optimization
+- [ ] Deploy automático (CI/CD)
+- [ ] Monitoring e observabilidade
+- [ ] Documentação completa
 
 ## 🎯 Objetivos de Impacto Social
 - **Meta 2025**: 100 vagas publicadas, 500 candidatos cadastrados

@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/felipemacedo1/portal-vagas/workflows/CI/badge.svg)](https://github.com/felipemacedo1/portal-vagas/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/felipemacedo1/portal-vagas/releases)
+[![Version](https://img.shields.io/badge/version-0.0.1--SNAPSHOT-blue.svg)](https://github.com/felipemacedo1/portal-vagas/releases)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.java.net/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.x-green.svg)](https://spring.io/projects/spring-boot)
 
@@ -13,10 +13,11 @@ API REST para portal de vagas com autenticação JWT e controle de acesso basead
 ## Tecnologias
 
 - Java 17
-- Spring Boot 3.3.x
-- PostgreSQL + Flyway
+- Spring Boot 3.3.2
+- PostgreSQL + Hibernate (JPA)
 - Spring Security + JWT
 - Springdoc OpenAPI (Swagger)
+- BCrypt (Password Encoding)
 
 ## Roles
 
@@ -59,10 +60,18 @@ mvn spring-boot:run
    - API: http://localhost:8081
    - Swagger: http://localhost:8081/swagger-ui/index.html
 
+### 🔐 Configurações de Segurança
+- **CORS**: Configurado para permitir todas as origens (`allowCredentials: true`)
+- **JWT**: Access token (1h) + Refresh token (24h)
+- **Passwords**: BCrypt com salt automático
+- **Endpoints públicos**: `/auth/**`, `/jobs/public/**`, `/swagger-ui/**`, `/actuator/**`
+
 ### ⚠️ Importante
 - **Para rodar aplicação**: Use `mvn spring-boot:run`
 - **Para rodar testes**: Use `mvn test` (usa H2 em memória)
 - **PostgreSQL**: Deve estar rodando (docker-compose)
+- **Schema**: Hibernate com `ddl-auto: create-drop` - recria schema a cada startup
+- **Dados iniciais**: Admin user e dados de teste criados automaticamente via DataLoader
 
 ### Configuração de Email
 
@@ -100,7 +109,9 @@ Para habilitar notificações por email:
 - `GET /admin/jobs/pending` - Vagas pendentes
 - `POST /admin/jobs/{id}/approve` - Aprovar vaga
 - `POST /admin/jobs/{id}/reject` - Rejeitar vaga
+- `GET /admin/companies` - Listar empresas
 - `POST /admin/companies/{id}/verify` - Verificar empresa
+- `POST /admin/companies/{id}/unverify` - Desverificar empresa
 
 ## Fluxo MVP
 
@@ -113,4 +124,4 @@ Para habilitar notificações por email:
 ## Usuário Admin Padrão
 
 - Email: admin@portalvagas.com
-- Senha: password (hash BCrypt já inserido na migration)
+- Senha: password (criado automaticamente pelo DataLoader com hash BCrypt)
