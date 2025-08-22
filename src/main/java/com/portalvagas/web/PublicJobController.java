@@ -6,11 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/jobs/public")
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PublicJobController {
 
     private final JobRepository jobRepository;
@@ -21,7 +23,7 @@ public class PublicJobController {
             @RequestParam(required = false) String location,
             @RequestParam(required = false) Boolean remote,
             Pageable pageable) {
-        return jobRepository.findPublicJobs(title, location, remote, pageable);
+        return jobRepository.findByStatus(Job.Status.APPROVED, pageable);
     }
 
     @GetMapping("/{id}")
