@@ -2,8 +2,10 @@ package com.portalvagas.auth;
 
 import com.portalvagas.domain.User;
 import com.portalvagas.domain.UserRepository;
+import com.portalvagas.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -21,9 +24,9 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity.badRequest().body("Email already exists");
+            return ResponseEntity.badRequest().build();
         }
 
         User user = new User();
@@ -36,7 +39,13 @@ public class AuthController {
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+        AuthResponse.UserDto userDto = new AuthResponse.UserDto(
+            user.getId(), 
+            user.getEmail(), 
+            user.getRole()
+        );
+
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, userDto));
     }
 
     @PostMapping("/login")
@@ -54,6 +63,35 @@ public class AuthController {
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+        AuthResponse.UserDto userDto = new AuthResponse.UserDto(
+            user.getId(), 
+            user.getEmail(), 
+            user.getRole()
+        );
+
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, userDto));
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+        String email = jwtService.extractUsername(request.refreshToken());
+        User user = userRepository.findByEmail(email).orElseThrow();
+        
+        if (jwtService.isTokenValid(request.refreshToken(), user)) {
+            String accessToken = jwtService.generateAccessToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
+            
+            AuthResponse.UserDto userDto = new AuthResponse.UserDto(
+                user.getId(), 
+                user.getEmail(), 
+                user.getRole()
+            );
+            
+            return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, userDto));
+        }
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    public record RefreshRequest(String refreshToken) {}
 }
