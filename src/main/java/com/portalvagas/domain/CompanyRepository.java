@@ -7,5 +7,7 @@ import java.util.Optional;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long> {
+    long countByVerified(Boolean verified);
+    
     Optional<Company> findByUserId(Long userId);
 }
