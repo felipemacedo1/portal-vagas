@@ -34,7 +34,7 @@ spring:
         force-lazy-loading: false
 
 server:
-  port: 8081
+  port: 8080
 
 jwt:
   secret: ${JWT_SECRET:dev-secret-key-change-in-production-min-256-bits}

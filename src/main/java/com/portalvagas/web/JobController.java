@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/jobs")
+@RequestMapping("/api/jobs")
 @RequiredArgsConstructor
 public class JobController {
 

@@ -15,10 +15,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/jobs/public")
+@RequestMapping("/api/jobs/public")
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@CrossOrigin(origins = "*")
 public class PublicJobController {
 
     private final JobRepository jobRepository;
