@@ -1,48 +1,55 @@
 package com.portalvagas.web;
 
+import com.portalvagas.domain.Application;
+import com.portalvagas.domain.User;
+import com.portalvagas.dto.ApplicationDTO;
+import com.portalvagas.dto.ApplicationSummaryDTO;
+import com.portalvagas.service.CandidateService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/candidates")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('CANDIDATE')")
 public class CandidateController {
 
+    private final CandidateService candidateService;
+
     @GetMapping("/applications")
-    public Map<String, Object> getCandidateApplications(
-            Authentication authentication,
+    public Page<ApplicationDTO> getCandidateApplications(
+            @AuthenticationPrincipal User user,
             Pageable pageable) {
-        
-        // Mock data for now - will be replaced with real implementation
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", List.of());
-        response.put("totalElements", 0);
-        response.put("totalPages", 0);
-        response.put("size", pageable.getPageSize());
-        response.put("number", pageable.getPageNumber());
-        response.put("first", true);
-        response.put("last", true);
-        
-        return response;
+        Page<Application> apps = candidateService.getMyApplications(user, pageable);
+        return new PageImpl<>(
+                apps.getContent().stream().map(ApplicationDTO::from).collect(Collectors.toList()),
+                pageable,
+                apps.getTotalElements()
+        );
     }
 
-    @PutMapping("/me")
-    public ResponseEntity<Map<String, Object>> updateProfile(
-            @RequestBody Map<String, Object> profileData,
-            Authentication authentication) {
-        
-        // Mock response - will be replaced with real implementation
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Profile updated successfully");
-        response.put("data", profileData);
-        
-        return ResponseEntity.ok(response);
+    @PostMapping("/applications")
+    public ResponseEntity<ApplicationDTO> applyToJob(
+            @RequestParam Long jobId,
+            @AuthenticationPrincipal User user,
+            @RequestBody(required = false) ApplyRequest body) {
+        // coverLetter é opcional e ainda não é persistido; ignoramos por ora
+        Application application = candidateService.applyToJob(user, jobId);
+        return ResponseEntity.ok(ApplicationDTO.from(application));
+    }
+
+    @Data
+    public static class ApplyRequest {
+        private String coverLetter;
     }
 }

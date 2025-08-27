@@ -24,4 +24,8 @@ public class CompanyService {
     public Company getCompanyByUser(User user) {
         return companyRepository.findByUserId(user.getId()).orElse(null);
     }
+
+    public Company getCompanyById(Long id) {
+        return companyRepository.findById(id).orElse(null);
+    }
 }

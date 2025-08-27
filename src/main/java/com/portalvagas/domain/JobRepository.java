@@ -12,4 +12,14 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     Page<Job> findByCompanyId(Long companyId, Pageable pageable);
     
     long countByStatus(Job.Status status);
+
+    long countByCompanyId(Long companyId);
+
+    long countByStatusAndCompanyId(Job.Status status, Long companyId);
+
+    Page<Job> findByStatusAndTitleContainingIgnoreCaseAndLocationContainingIgnoreCase(
+        Job.Status status, String title, String location, Pageable pageable);
+
+    Page<Job> findByStatusAndTitleContainingIgnoreCaseAndLocationContainingIgnoreCaseAndRemote(
+        Job.Status status, String title, String location, Boolean remote, Pageable pageable);
 }

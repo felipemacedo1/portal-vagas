@@ -17,29 +17,66 @@ public class DashboardController {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
     private final ApplicationRepository applicationRepository;
+    private final CandidateRepository candidateRepository;
 
     @GetMapping("/stats/candidate")
     public Map<String, Object> getCandidateStats(Authentication authentication) {
-        // Mock stats for now - will be implemented with real queries
+        User user = (User) authentication.getPrincipal();
+        Candidate candidate = candidateRepository.findByUserId(user.getId())
+                .orElse(null);
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalApplications", 0);
-        stats.put("pendingApplications", 0);
-        stats.put("approvedApplications", 0);
-        stats.put("rejectedApplications", 0);
-        stats.put("profileCompleteness", 85);
-        
+        if (candidate == null) {
+            stats.put("totalApplications", 0);
+            stats.put("pendingApplications", 0);
+            stats.put("approvedApplications", 0);
+            stats.put("rejectedApplications", 0);
+            stats.put("profileCompleteness", 0);
+            return stats;
+        }
+
+        long total = applicationRepository.countByCandidateId(candidate.getId());
+        long pending = applicationRepository.countByStatusAndCandidateId(Application.Status.PENDING, candidate.getId());
+        long accepted = applicationRepository.countByStatusAndCandidateId(Application.Status.ACCEPTED, candidate.getId());
+        long rejected = applicationRepository.countByStatusAndCandidateId(Application.Status.REJECTED, candidate.getId());
+
+        stats.put("totalApplications", total);
+        stats.put("pendingApplications", pending);
+        stats.put("approvedApplications", accepted);
+        stats.put("rejectedApplications", rejected);
+
+        int completeness = 0;
+        int fields = 0;
+        if (candidate.getFullName() != null && !candidate.getFullName().isBlank()) { completeness += 25; fields++; }
+        if (candidate.getPhone() != null && !candidate.getPhone().isBlank()) { completeness += 25; fields++; }
+        if (candidate.getCvData() != null) { completeness += 25; fields++; }
+        if (candidate.getUser() != null && candidate.getUser().getEmail() != null) { completeness += 25; fields++; }
+        stats.put("profileCompleteness", completeness);
+
         return stats;
     }
 
     @GetMapping("/stats/employer")
     public Map<String, Object> getEmployerStats(Authentication authentication) {
-        // Mock stats for now - will be implemented with real queries
+        User user = (User) authentication.getPrincipal();
+        Company company = companyRepository.findByUserId(user.getId()).orElse(null);
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalJobs", 0);
-        stats.put("activeJobs", 0);
-        stats.put("totalApplications", 0);
-        stats.put("pendingApplications", 0);
-        
+        if (company == null) {
+            stats.put("totalJobs", 0);
+            stats.put("activeJobs", 0);
+            stats.put("totalApplications", 0);
+            stats.put("pendingApplications", 0);
+            return stats;
+        }
+
+        long totalJobs = jobRepository.countByCompanyId(company.getId());
+        long activeJobs = jobRepository.countByStatusAndCompanyId(Job.Status.APPROVED, company.getId());
+        long totalApplications = applicationRepository.countByJobCompanyId(company.getId());
+        long pendingApplications = applicationRepository.countByStatusAndJobCompanyId(Application.Status.PENDING, company.getId());
+
+        stats.put("totalJobs", totalJobs);
+        stats.put("activeJobs", activeJobs);
+        stats.put("totalApplications", totalApplications);
+        stats.put("pendingApplications", pendingApplications);
         return stats;
     }
 
@@ -58,5 +95,18 @@ public class DashboardController {
         stats.put("todayApprovals", 0); // Will be implemented with date queries
         
         return stats;
+    }
+
+    @GetMapping("/stats")
+    public Map<String, Object> getStats(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
+            return Map.of();
+        }
+        User user = (User) authentication.getPrincipal();
+        return switch (user.getRole()) {
+            case ADMIN -> getAdminStats(authentication);
+            case EMPLOYER -> getEmployerStats(authentication);
+            case CANDIDATE -> getCandidateStats(authentication);
+        };
     }
 }

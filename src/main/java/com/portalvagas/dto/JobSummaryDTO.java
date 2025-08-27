@@ -21,6 +21,7 @@ public class JobSummaryDTO {
     private Boolean companyVerified;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer applicationsCount;
 
     public JobSummaryDTO() {}
 

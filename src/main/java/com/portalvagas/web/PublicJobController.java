@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/jobs/public")
+@RequestMapping("/api/public/jobs")
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PublicJobController {
@@ -29,7 +29,16 @@ public class PublicJobController {
             @RequestParam(required = false) Boolean remote,
             Pageable pageable) {
         
-        Page<Job> jobs = jobRepository.findByStatus(Job.Status.APPROVED, pageable);
+        String t = title != null ? title : "";
+        String loc = location != null ? location : "";
+        Page<Job> jobs;
+        if (remote != null) {
+            jobs = jobRepository.findByStatusAndTitleContainingIgnoreCaseAndLocationContainingIgnoreCaseAndRemote(
+                Job.Status.APPROVED, t, loc, remote, pageable);
+        } else {
+            jobs = jobRepository.findByStatusAndTitleContainingIgnoreCaseAndLocationContainingIgnoreCase(
+                Job.Status.APPROVED, t, loc, pageable);
+        }
         
         List<Map<String, Object>> content = jobs.getContent().stream()
             .map(this::mapToSimpleDto)

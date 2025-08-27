@@ -19,7 +19,7 @@ public class ApplicationSummaryDTO {
 
     public ApplicationSummaryDTO(Application application) {
         this.id = application.getId();
-        this.status = application.getStatus().name();
+        this.status = mapStatus(application.getStatus());
         this.candidateName = application.getCandidate().getFullName();
         this.candidateEmail = application.getCandidate().getUser().getEmail();
         this.jobTitle = application.getJob().getTitle();
@@ -29,5 +29,14 @@ public class ApplicationSummaryDTO {
 
     public static ApplicationSummaryDTO from(Application application) {
         return application != null ? new ApplicationSummaryDTO(application) : null;
+    }
+
+    private String mapStatus(Application.Status status) {
+        return switch (status) {
+            case ACCEPTED -> "APPROVED";
+            case REJECTED -> "REJECTED";
+            case REVIEWED -> "INTERVIEW";
+            case PENDING -> "PENDING";
+        };
     }
 }

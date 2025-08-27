@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class CandidateDTO {
     private Long id;
+    private String email;
     private String fullName;
     private String phone;
     private String cvFilename;
@@ -21,6 +22,7 @@ public class CandidateDTO {
 
     public CandidateDTO(Candidate candidate) {
         this.id = candidate.getId();
+        this.email = candidate.getUser() != null ? candidate.getUser().getEmail() : null;
         this.fullName = candidate.getFullName();
         this.phone = candidate.getPhone();
         this.cvFilename = candidate.getCvFilename();

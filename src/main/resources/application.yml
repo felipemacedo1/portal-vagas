@@ -16,7 +16,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update  # evitar perda de dados em dev
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     show-sql: true
@@ -40,6 +40,10 @@ jwt:
   secret: ${JWT_SECRET:dev-secret-key-change-in-production-min-256-bits}
   access-token-expiration: 3600000  # 1 hour
   refresh-token-expiration: 86400000 # 24 hours
+
+# CORS
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
 
 mail:
   host: smtp.gmail.com
@@ -86,6 +90,10 @@ jwt:
   secret: ${JWT_SECRET}
   access-token-expiration: ${JWT_ACCESS_EXPIRATION:3600000}
   refresh-token-expiration: ${JWT_REFRESH_EXPIRATION:86400000}
+
+# CORS
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
 
 mail:
   host: ${MAIL_HOST:smtp.gmail.com}

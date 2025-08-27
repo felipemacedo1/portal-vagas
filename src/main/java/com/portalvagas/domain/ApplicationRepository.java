@@ -15,4 +15,14 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     
     @Query("SELECT a FROM Application a JOIN a.job j WHERE j.company.id = :companyId")
     Page<Application> findByCompanyId(@Param("companyId") Long companyId, Pageable pageable);
+
+    long countByJobId(Long jobId);
+
+    long countByJobCompanyId(Long companyId);
+
+    long countByStatusAndJobCompanyId(Application.Status status, Long companyId);
+
+    long countByCandidateId(Long candidateId);
+
+    long countByStatusAndCandidateId(Application.Status status, Long candidateId);
 }

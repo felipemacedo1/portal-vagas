@@ -45,6 +45,14 @@ public class CompanyController {
             ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CompanyDTO> getCompanyById(@PathVariable Long id) {
+        Company company = companyService.getCompanyById(id);
+        return company != null ?
+            ResponseEntity.ok(CompanyDTO.from(company)) :
+            ResponseEntity.notFound().build();
+    }
+
     @Data
     public static class CreateCompanyRequest {
         @NotBlank

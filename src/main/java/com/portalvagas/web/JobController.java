@@ -49,13 +49,40 @@ public class JobController {
         return ResponseEntity.ok(JobSummaryDTO.from(job));
     }
 
+    @GetMapping
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public Page<JobSummaryDTO> listEmployerJobs(@AuthenticationPrincipal User user, Pageable pageable) {
+        return jobService.getEmployerJobSummaries(user, pageable);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public ResponseEntity<JobSummaryDTO> updateJob(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateJobRequest request,
+            @AuthenticationPrincipal User user) {
+        Job job = jobService.updateJob(
+            id, user,
+            request.getTitle(), request.getDescription(), request.getRequirements(),
+            request.getSalaryMin(), request.getSalaryMax(), request.getLocation(), request.getRemote()
+        );
+        return ResponseEntity.ok(JobSummaryDTO.from(job));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public ResponseEntity<Void> deleteJob(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        jobService.deleteJob(id, user);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/applications")
     @PreAuthorize("hasRole('EMPLOYER')")
-    public Page<ApplicationSummaryDTO> getApplications(@AuthenticationPrincipal User user, Pageable pageable) {
+    public Page<ApplicationDTO> getApplications(@AuthenticationPrincipal User user, Pageable pageable) {
         Page<Application> applications = jobService.getJobApplications(user, pageable);
         return new PageImpl<>(
             applications.getContent().stream()
-                .map(ApplicationSummaryDTO::from)
+                .map(ApplicationDTO::from)
                 .collect(Collectors.toList()),
             pageable,
             applications.getTotalElements()
@@ -66,11 +93,22 @@ public class JobController {
     @PreAuthorize("hasRole('EMPLOYER')")
     public ResponseEntity<ApplicationDTO> updateApplicationStatus(
             @PathVariable Long id,
-            @RequestParam Application.Status status,
+            @RequestBody UpdateApplicationStatusRequest body,
             @AuthenticationPrincipal User user) {
-        
-        Application application = jobService.updateApplicationStatus(id, status, user);
+        Application.Status targetStatus = mapFrontendStatus(body.getStatus());
+        Application application = jobService.updateApplicationStatus(id, targetStatus, user);
         return ResponseEntity.ok(ApplicationDTO.from(application));
+    }
+
+    private Application.Status mapFrontendStatus(String status) {
+        if (status == null) throw new IllegalArgumentException("status is required");
+        return switch (status.toUpperCase()) {
+            case "APPROVED", "ACCEPTED" -> Application.Status.ACCEPTED;
+            case "REJECTED" -> Application.Status.REJECTED;
+            case "INTERVIEW", "REVIEWED" -> Application.Status.REVIEWED;
+            case "PENDING" -> Application.Status.PENDING;
+            default -> throw new IllegalArgumentException("Invalid status: " + status);
+        };
     }
 
     @Data
@@ -84,5 +122,21 @@ public class JobController {
         private BigDecimal salaryMax;
         private String location;
         private Boolean remote = false;
+    }
+
+    @Data
+    public static class UpdateJobRequest {
+        private String title;
+        private String description;
+        private String requirements;
+        private BigDecimal salaryMin;
+        private BigDecimal salaryMax;
+        private String location;
+        private Boolean remote;
+    }
+
+    @Data
+    public static class UpdateApplicationStatusRequest {
+        private String status;
     }
 }
