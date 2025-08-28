@@ -1,6 +1,8 @@
 package com.portalvagas.service;
 
 import com.portalvagas.domain.*;
+import com.portalvagas.dto.JobSummaryDTO;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -130,7 +132,7 @@ public class JobService {
 
         Page<Job> jobs = jobRepository.findByCompanyId(company.getId(), pageable);
         return new PageImpl<>(
-            jobs.getContent().stream().map(job -> {
+            jobs.getContent().stream().map((Job job) -> {
                 JobSummaryDTO dto = JobSummaryDTO.from(job);
                 int count = (int) applicationRepository.countByJobId(job.getId());
                 dto.setApplicationsCount(count);
